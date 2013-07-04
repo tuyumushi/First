@@ -30,12 +30,12 @@ public class test1 extends DroidGap
         super.onCreate(savedInstanceState);
         // Set by <content src="index.html" /> in config.xml
         //super.loadUrl(Config.getStartUrl());
-        //super.loadUrl("file:///android_asset/www/index.html");
+        super.loadUrl("file:///android_asset/www/index.html");
         //super.loadUrl("file:///android_asset/www/easeljsProject1_TouchMovingNumbers.html");
         //super.loadUrl("file:///android_asset/www/test1.html");
         //super.loadUrl("file:///android_asset/www/Game.html");
         //super.loadUrl("file:///android_asset/www/test3_phonegapAudio_Vibe.html");
-        super.loadUrl("file:///android_asset/www/test3_phonegapAudio_Vibe.html");
+        //super.loadUrl("file:///android_asset/www/test3_phonegapAudio_Vibe.html");
     }
 }
 	
