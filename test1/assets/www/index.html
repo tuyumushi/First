@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <title>Easel simple game</title>
+<!-- 
 <script src="js/easel.js"></script>
+ -->
+<script src="EasleJS/lib/easeljs-0.6.1.min.js"></script>
 <script>
 var canvas;
 var stage;
@@ -22,7 +25,8 @@ var ship;
 
 function init() {
 	canvas = document.getElementById("canvas");
-	stage = new Stage(canvas);
+	stage = new createjs.Stage(canvas);
+	createjs.Touch.enable(stage);
 	score = 0;
 	
 	canvas.onmousedown = onMouseDown;
@@ -38,7 +42,7 @@ function init() {
 }
 
 function setBG(event){
-	var bgrnd = new Bitmap(bg);
+	var bgrnd = new createjs.Bitmap(bg);
 	stage.addChild(bgrnd);
 	stage.update();
 }
@@ -58,7 +62,7 @@ function createShips(event){
 	//stage.update();
 	
 	for (var i=0; i<l; i++){
-		bitmap = new Bitmap(image);
+		bitmap = new createjs.Bitmap(image);
 		//container.addChild(bitmap);
 		bitmap.name="ship"+i;
 		resetEnemy(bitmap);
@@ -67,14 +71,14 @@ function createShips(event){
 		bitmap.mouseEnabled = true;
 		bmpList.push(bitmap);
 	}
-	txt = new Text ("Score: 0", "24px Arial", "#FFF");
+	txt = new createjs.Text("Score: 0", "24px Arial", "#FFF");
 	txt.textBaseline="top";
 	txt.x = 800;
 	txt.y = 20;
 	stage.addChild(txt);
 	play=true; 
 	
-	Ticker.addListener(window);  
+	createjs.Ticker.addListener(window);  
 }
 function resetEnemy(ship){
 	ship.x = canvas.width + Math.random()*500;;
@@ -117,7 +121,7 @@ function tick(){
 	stage.update();
 }
 function gameOver(){
-	gameTxt = new Text("Game Over\n\n", "36px Arial", "#FFF");
+	gameTxt = new createjs.Text("Game Over\n\n", "36px Arial", "#FFF");
 	gameTxt.text += "Click to play again";
 	gameTxt.textAlign = "center";
 	gameTxt.x = canvas.width /2;
