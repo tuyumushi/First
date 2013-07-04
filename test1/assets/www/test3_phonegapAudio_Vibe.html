@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>EaselJS Example: Number</title>
+
+	<!--
+	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+	-->
+	
+	<script src="EaselJS/lib/easeljs-0.6.1.min.js"></script>
+	<script src="PreloadJS/lib/preloadjs-0.3.1.min.js"></script>
+	<script src="SoundJS/lib/soundjs-0.4.1.min.js"></script>
+	<script src="TweenJS/lib/tweenjs-0.4.1.min.js"></script>
+	<script type="text/javascript" src="cordova.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+
+	<script>
+	var canvas;
+	var stage;
+
+	var txt;
+	var txt1;
+	var txt2;
+	var txt3;
+
+	var bitmap1;
+	var bitmap2;
+	var bitmap3;
+	var bitmap4;
+	var bitmap5;
+
+	var bitmap_popup1;	
+	var bitmap_popup2;	
+	var bitmap_popup3;
+	
+	var bitmapTarget1;
+	var bitmapTarget2;
+	var bitmapTarget3;
+
+	var x=4;
+	var y=3;
+	var dx=2;
+	var dx2=3;
+	var dy=3;
+	var dy2=4;
+	var dx3=2;
+	var dy3=3;
+
+	var container;
+	var bmp1;
+	var bmp2;
+
+	var globalCounter=1;
+	var bitmapElement;
+	var objInfo;
+	
+	var queue;
+	var bgmInstance;
+	var objects;
+
+	var audioObj = null;
+
+	function init() {
+		canvas = document.getElementById("testCanvas");
+		stage = new createjs.Stage(canvas);
+		if (createjs.Touch.isSupported()) {
+    		createjs.Touch.enable(stage);
+  		}
+
+		var url = "sound/bang.wav";		
+						
+		//creating bitmap images object
+		bitmap1 = new createjs.Bitmap( 'img/one.png' );
+		bitmap2 = new createjs.Bitmap( 'img/two.png' );
+		bitmap3 = new createjs.Bitmap( 'img/three.png' );
+		//bitmap4 = new createjs.Bitmap( 'img/four.png' );
+		//bitmap5 = new createjs.Bitmap( 'img/five.png' );
+		bitmapTarget1 = new createjs.Bitmap("img/cubes.png");		
+		bitmapTarget2 = new createjs.Bitmap("img/cross_block.png");		
+		bitmapTarget3 = new createjs.Bitmap("img/frame.png");		
+
+		//position them on the stage 
+		bitmap1.x= 900;
+		bitmap1.y= 200;
+		bitmap1.regX=bitmap1.image.width/2;		
+		bitmap1.regY=bitmap1.image.height/2;
+		bitmap1.name=0;
+
+        	bitmap2.x= 800;
+		bitmap2.y= 100;
+		bitmap2.regX=bitmap2.image.width/2;		
+		bitmap2.regY=bitmap2.image.height/2;
+		bitmap2.name=1;
+
+		bitmap3.x= 700;
+		bitmap3.y= 100;
+		bitmap3.regX=bitmap3.image.width/2;		
+		bitmap3.regY=bitmap3.image.height/2;
+		bitmap3.name=2;
+
+		bitmapTarget1.x=200;
+		bitmapTarget1.y=bitmapTarget1.image.height/2;
+		bitmapTarget1.regX=bitmapTarget1.image.width/2;		
+		bitmapTarget1.regY=bitmapTarget1.image.height/2;	
+		bitmapTarget1.name="Target1";
+		//creating text object			
+		txt1 = new createjs.Text("1", "18px Arial");
+		// position it on stage:
+		txt1.x = bitmapTarget1.x;
+		txt1.y = bitmapTarget1.image.height;
+		stage.addChild(txt1);
+		
+
+		bitmapTarget2.x=300;
+		bitmapTarget2.y=bitmapTarget2.image.height/2;
+		bitmapTarget2.regX=bitmapTarget2.image.width/2;		
+		bitmapTarget2.regY=bitmapTarget2.image.height/2;	
+		bitmapTarget2.name="Target2";
+		//creating text object			
+		txt2 = new createjs.Text("2", "18px Arial");
+		// position it on stage:
+		txt2.x = bitmapTarget2.x;
+		txt2.y = bitmapTarget2.image.height;
+		stage.addChild(txt2);
+
+		bitmapTarget3.x=400;
+		bitmapTarget3.y=bitmapTarget3.image.height/2;
+		bitmapTarget3.regX=bitmapTarget3.image.width/2;		
+		bitmapTarget3.regY=bitmapTarget3.image.height/2;	
+		bitmapTarget3.name="Target3";		
+		//creating text object			
+		txt3 = new createjs.Text("3", "18px Arial");
+		// position it on stage:
+		txt3.x = bitmapTarget3.x;
+		txt3.y = bitmapTarget3.image.height;
+		stage.addChild(txt3);
+		
+		var hit = new createjs.Shape();
+    		hit.graphics.beginFill("#ff0000").drawRect(370,0,65,90);
+		hit.x = 37;
+		hit.y = bitmapTarget3.y;
+		hit.regX=bitmapTarget3.image.width/2;
+		hit.regY=bitmapTarget3.image.height/2;
+		hit.name="Target3";
+		bitmapTarget3.hitArea = hit;
+		stage.addChild(hit);
+
+		// Add bitmaps to container
+		container = new createjs.Container();
+		container.addChild(bitmap1, bitmap2, bitmap3);
+		
+		// add Container to the stage
+		stage.addChild(container);
+		stage.addChild(bitmapTarget1,bitmapTarget2,bitmapTarget3);
+
+		//adding eventlistener to each object
+		bitmap1.addEventListener("click", bitmap_clicked);
+		bitmap2.addEventListener("click", bitmap_clicked);
+		bitmap3.addEventListener("click", bitmap_clicked);
+		//bitmap4.addEventListener("click", bitmap_clicked);
+		//bitmap5.addEventListener("click", bitmap_clicked);
+		
+		//create ticker object and add event handler 
+		createjs.Ticker.setFPS(20);
+		createjs.Ticker.useRAF = true;
+		createjs.Ticker.addEventListener("tick", handleTick);
+	
+		// call update on the stage to make it render the current display list to the canvas
+		stage.update();
+	}
+
+	function handleTick() {
+		//var totalnumber = container.getNumChildren();
+		//console.log(totalnumber);
+		//for(var i=0; i<totalnumber; i++)
+		
+		//bmp = container.getChildAt(i);
+		//console.log(bmp.name);
+		//console.log(container.getChildAt(0).name);
+		
+		//if(update){
+  		//update = false;
+  		//stage.update(); 
+ 		//}
+
+		if(container.getNumChildren() ==3)
+		{	
+			if(bitmap1.x+dx>canvas.width || bitmap1.x+dx < 0)
+			{
+				dx=-dx;
+			}
+			if(bitmap1.y+dy>canvas.height || bitmap1.y+dy < 0)
+			{
+				dy=-dy;
+			}
+			bitmap1.x += dx;
+			bitmap1.y += dy;
+			container.addChild(bitmap1);
+		}
+	
+		if(container.getNumChildren() == 3 || container.getNumChildren() == 2)
+		{
+			if(bitmap2.x+dx2>canvas.width || bitmap2.x+dx2 < 0)
+			{
+				dx2=-dx2;
+			}
+			if(bitmap2.y+dy2>canvas.height || bitmap2.y+dy2 < 0)
+			{
+				dy2=-dy2;
+			}
+			bitmap2.x += Math.random()*dx2;
+			bitmap2.y += dy2;
+			container.addChild(bitmap2);
+		}
+
+		if(container.getNumChildren() <= 3 && container.getNumChildren() >= 1)
+		{
+			if(bitmap3.x+dx3>canvas.width || bitmap3.x+dx3 < 0)
+			{
+				dx3=-dx3;
+			}
+			if(bitmap3.y+dy3>canvas.height || bitmap3.y+dy3 < 0)
+			{
+				dy3=-dy3;
+			}
+			bitmap3.x += Math.random()*dx3;
+			bitmap3.y += dy3;
+			container.addChild(bitmap3);
+		}
+		
+		stage.addChild(container);
+		stage.update();
+    	}
+
+
+
+	function bitmap_clicked(event) {
+		var clickedBitmap = container.getObjectUnderPoint(event.stageX, event.stageY);
+		//window.alert(clickedBitmap.name);
+		var totalnumber = container.getNumChildren();
+		//window.alert(totalnumber);		
+		if(clickedBitmap.name == 0)
+		{
+			bitmap_popup1 = new createjs.Bitmap( 'img/one.png' );
+			bitmap_popup1.x=bitmap_popup1.image.width;
+			bitmap_popup1.y=bitmap_popup1.image.height;
+			bitmap_popup1.regX=bitmap_popup1.image.width/2;
+			bitmap_popup1.regY=bitmap_popup1.image.height/2;
+			bitmap_popup1.name=0;
+			bitmap_popup1.addEventListener("mousedown", bitmap_mousedown);
+			stage.addChild(bitmap_popup1);	
+			container.removeChild(bitmap1);
+			stage.update();	
+		}
+		if(clickedBitmap.name == 1)
+		{
+			if(totalnumber == 2)
+			{
+				bitmap_popup2 = new createjs.Bitmap( 'img/two.png' );
+				bitmap_popup2.addEventListener("mousedown", bitmap_mousedown);
+				bitmap_popup2.x=bitmap_popup2.image.width;
+				bitmap_popup2.y=bitmap_popup2.image.height;
+				bitmap_popup2.regX=bitmap_popup2.image.width/2;
+				bitmap_popup2.regY=bitmap_popup2.image.height/2;
+				bitmap_popup2.name=1;
+				container.removeChild(bitmap2);			
+				stage.addChild(bitmap_popup2);
+				stage.update();
+			}	
+		}
+		if(clickedBitmap.name == 2)
+		{
+			if(totalnumber == 1)
+			{
+				bitmap_popup3 = new createjs.Bitmap( 'img/three.png' );
+				bitmap_popup3.addEventListener("mousedown", bitmap_mousedown);
+				bitmap_popup3.x=bitmap_popup3.image.width;
+				bitmap_popup3.y=bitmap_popup3.image.height;
+				bitmap_popup3.regX=bitmap_popup3.image.width/2;
+				bitmap_popup3.regY=bitmap_popup3.image.height/2;
+				bitmap_popup3.name=2;
+				container.removeChild(bitmap3);
+				stage.addChild(bitmap_popup3);
+				stage.update();	
+			}
+		}
+
+			// play the shot sound
+        		//createjs.Sound.play("laser", createjs.Sound.INTERUPT_LATE);
+			//createjs.Sound.play("laser");
+			navigator.notification.vibrate(500);
+			//audioObj = new Media(url, endMusic, errorMusic);
+        	//	audioObj.play();
+        	var basePath = String(location);
+        	var path = basePath.substr(0, basePath.lastIndexOf("/"));
+        	var url = path+"/sound/pop1.mp3";
+     		audioObj = new Media(url, endMusic, errorMusic);
+        	audioObj.play();
+        		
+	}
+
+  	function endMusic(){
+    		//navigator.notification.alert("演奏が終了しました", function(){}, "お知らせ");
+    		//playFlag = false;
+  	}
+
+  	function errorMusic(e){
+    		navigator.notification.alert("エラーが発生しました："+e, function(){}, "エラー");
+    		//playFlag = false;
+  	}
+
+	function bitmap_show_popup(event) {
+		var bitmap_popup = event.target;
+		bitmap_popup.addEventListener("mousedown", bitmap_mousedown);
+		//window.alert(event.target.name);
+		//container.removeChild(bitmap1);		
+		//stage.removeChild(bitmap1);
+		//stage.removeChild(bitmap_popup);
+	
+		stage.update();
+        	// play sound
+        	//createjs.Sound.play("break", createjs.Sound.INTERUPT_LATE, 0, 0.8);
+	}
+
+	function bitmap_mousedown(e) {
+		e.onMouseMove = function(ev){
+  			e.target.x = ev.stageX;
+  			e.target.y = ev.stageY;
+  			//update = true;
+ 		}
+	
+	    	e.onMouseUp = function(ev){
+			var objects = new Array();
+                        objects = stage.getObjectsUnderPoint(ev.stageX, ev.stageY);
+			//window.alert(ev.target.name);
+			//window.alert(objects[1]);
+			if(objects[1].name == "Target1" && ev.target.name == 0)
+			{
+				//window.alert(object[1]);
+				ev.target.x = bitmapTarget1.x;
+				ev.target.y = bitmapTarget1.y;
+			}
+			if(objects[1].name == "Target2" && ev.target.name == 1)
+			{
+				//window.alert(object[1]);
+				ev.target.x = bitmapTarget2.x;
+				ev.target.y = bitmapTarget2.y;
+			}
+
+			if(objects[1].name == "Target3" && ev.target.name == 2)
+			{
+				//window.alert(objects[1]);
+				//window.alert(ev.target.name);
+				ev.target.x = bitmapTarget3.x;
+				ev.target.y = bitmapTarget3.y;
+			}
+			stage.update();
+		}
+	}
+
+	</script>
+</head>
+	
+<body onload="init();">
+
+	<header id="header" class="EaselJS">
+	    <h1><span class="text-product">かず　<strong>あそび</strong></span></h1>
+	</header>
+
+	<div class="canvasHolder">
+		<canvas id="testCanvas" width="960" height="400"></canvas>
+	</div>
+</body>
+</html>

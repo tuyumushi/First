@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>EaselJS Example: Number</title>
+
+	<!--
+	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+	-->
+	
+	<script src="EaselJS/lib/easeljs-0.6.1.min.js"></script>
+	<script src="PreloadJS/lib/preloadjs-0.3.1.min.js"></script>
+	<script src="SoundJS/lib/soundjs-0.4.1.min.js"></script>
+	<script src="TweenJS/lib/tweenjs-0.4.1.min.js"></script>
+
+	<script>
+	var canvas;
+	var stage;
+	var update = true;
+
+	var txt;
+	var bitmap1;
+	var bitmap2;
+	var bitmap3;
+	var bitmap4;
+	var bitmap5;
+
+	var bitmap_popup1;
+
+	var x=4;
+	var y=3;
+	var dx=2;
+	var dx2=3;
+	var dy=3;
+	var dy2=4;
+	var dx3=2;
+	var dy3=3;
+
+	var container;
+	var bmp1;
+	var bmp2;
+
+	var globalCounter=1;
+	var bitmapElement;
+	var objInfo;
+	
+	var queue;
+	var bgmInstance;
+
+	function init() {
+		canvas = document.getElementById("testCanvas");
+		stage = new createjs.Stage(canvas);
+		stage.enableMouseOver();
+
+		//creating bitmap images object
+		bitmap1 = new createjs.Bitmap( 'img/one.png' );
+		bitmap2 = new createjs.Bitmap( 'img/two.png' );
+		bitmap3 = new createjs.Bitmap( 'img/three.png' );
+		
+		bitmap5 = new createjs.Bitmap( 'img/five.png' );
+
+		//position them on the stage 
+		bitmap1.x= 400;
+		bitmap1.y= 200;
+		bitmap1.regX=bitmap1.image.width/2;
+		bitmap1.regY=bitmap1.image.height/2;
+			
+	        bitmap2.x= 300;
+		bitmap2.y= 100;
+		bitmap2.regX=bitmap2.image.width/2;
+		bitmap2.regY=bitmap2.image.height/2;
+
+		bitmap3.x= 200;
+		bitmap3.y= 100;
+		bitmap3.regX=bitmap3.image.width/2;
+		bitmap3.regY=bitmap3.image.height/2;
+
+		bitmap5.x= 500;
+		bitmap5.y= 100;
+		bitmap5.regX=bitmap5.image.width/2;
+		bitmap5.regY=bitmap5.image.height/2;
+		bitmap5.name="five";
+
+		// add bitmap to the stage
+		stage.addChild(bitmap1,bitmap2,bitmap3,bitmap5);
+	
+		//adding eventlistener to each object
+		bitmap1.addEventListener("mousedown", bitmap_mousedown);
+		bitmap2.addEventListener("mousedown", bitmap_mousedown);
+		bitmap3.addEventListener("mousedown", bitmap_mousedown);
+		//bitmap4.addEventListener("click", bitmap_clicked);
+		//bitmap5.addEventListener("click", bitmap_clicked);
+		
+		//create ticker object and add event handler 
+		createjs.Ticker.setFPS(20);
+		createjs.Ticker.useRAF = true;
+		createjs.Ticker.addEventListener("tick", handleTick);
+	
+		// call update on the stage to make it render the current display list to the canvas
+		stage.update();
+	}
+
+	function handleTick() {
+		 if(update){
+  		update = false;
+  		stage.update(); 
+ 		}
+    	}
+
+
+	function bitmap_mousedown(e) {
+		e.onMouseMove = function(ev){
+  			e.target.x = ev.stageX;
+  			e.target.y = ev.stageY;
+  			update = true;
+ 		}
+	
+	    	e.onMouseUp = function(ev){
+                        var object = stage.getObjectUnderPoint(ev.stageX, ev.stageY);
+			if(object.name == "five")
+			{
+				//window.alert(object.name);
+				ev.target.x = bitmap5.x;
+				ev.target.y = bitmap5.y;
+				stage.update();
+			}
+		}
+	}
+	</script>
+</head>
+	
+<body onload="init();">
+
+	<header id="header" class="EaselJS">
+	    <h1><span class="text-product">かず　<strong>あそび</strong></span></h1>
+	</header>
+
+	<div class="canvasHolder">
+		<canvas id="testCanvas" width="960" height="400"></canvas>
+	</div>
+</body>
+</html>

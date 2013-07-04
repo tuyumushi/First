@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+        <style type="text/css">
+    		ol { display: none; }
+    		li { background-color: #ddd; border-bottom:1px solid black; height: 40px; }
+  	</style>
+
+       
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+
+        <script type="text/javascript">
+		var audioObj = null;
+  		function onBodyLoad()
+  		{ 
+    			document.addEventListener("deviceready",onDeviceReady,false);
+  		}
+
+  		function onDeviceReady()
+  		{
+    			document.getElementsByTagName("ol")[0].style.display = "block";
+    			var list = document.getElementsByTagName("li");
+    			for(var i=0; i<list.length; i++){
+      				list[i].onclick = function(){
+        			var filename = this.getAttribute("data-name");
+        			var url = "music/"+filename;
+        			audioObj = new Media(url, endMusic, errorMusic);
+        			audioObj.play();
+      				}
+    			}
+  		}
+
+  		function endMusic(){
+    			alert("演奏が終了しました");
+  		}
+
+  		function errorMusic(e){
+    			alert("エラーが発生しました："+e);
+  		}
+  	</script>
+    </head>
+    <body onload="onBodyLoad()">
+    <h1>曲を選択</h1>
+    <ol>
+      <li data-name="pop1.mp3">音楽その1</li>
+      <li data-name="pop2.mp3">音楽その2</li>
+      <li data-name="pop3.mp3">音楽その3</li>
+    </ol>
+    </body>
+</html>
